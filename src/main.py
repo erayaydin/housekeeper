@@ -1,6 +1,8 @@
 """Main entry point for the application."""
 
+
 def main() -> None:
+    """Starts the application."""
     pass
 
 
