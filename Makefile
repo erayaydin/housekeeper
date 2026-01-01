@@ -4,7 +4,10 @@ init:
 	uv sync
 
 run:
-	uv run main.py
+	uv run src/main.py
+
+typecheck:
+	uv run mypy --config-file=pyproject.toml ./src/
 
 commit:
 	uv run cz commit

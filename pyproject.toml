@@ -9,6 +9,7 @@ dependencies = []
 [dependency-groups]
 dev = [
     "commitizen>=4.11.0",
+    "mypy>=1.19.1",
 ]
 
 [tool.commitizen]
@@ -17,3 +18,8 @@ tag_format = "$version"
 version_scheme = "semver2"
 version_provider = "uv"
 update_changelog_on_bump = true
+
+[tool.mypy]
+strict = true
+explicit_package_bases = true
+ignore_missing_imports = true
