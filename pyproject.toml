@@ -10,6 +10,7 @@ dependencies = []
 dev = [
     "commitizen>=4.11.0",
     "mypy>=1.19.1",
+    "pre-commit>=4.5.1",
 ]
 
 [tool.commitizen]

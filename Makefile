@@ -2,6 +2,8 @@
 
 init:
 	uv sync
+	uv run pre-commit install --install-hooks
+	uv run pre-commit autoupdate
 
 run:
 	uv run src/main.py
