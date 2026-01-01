@@ -8,6 +8,9 @@ init:
 run:
 	uv run src/main.py
 
+test:
+	uv run pytest -v
+
 typecheck:
 	uv run mypy --config-file=pyproject.toml ./src/
 
