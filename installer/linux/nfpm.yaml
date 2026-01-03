@@ -11,15 +11,15 @@ homepage: https://github.com/erayaydin/housekeeper
 license: MIT
 
 contents:
-  - src: ../../dist/housekeeper-linux-amd64
+  - src: dist/housekeeper-linux-amd64
     dst: /usr/bin/housekeeper
     file_info:
       mode: 0755
 
-  - src: ./housekeeper.service
+  - src: installer/linux/housekeeper.service
     dst: /usr/lib/systemd/system/housekeeper.service
     type: config
 
 scripts:
-  postinstall: ./postinstall.sh
-  preremove: ./preremove.sh
+  postinstall: installer/linux/postinstall.sh
+  preremove: installer/linux/preremove.sh
