@@ -1,0 +1,13 @@
+[Unit]
+Description=Housekeeper Directory Monitor
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/housekeeper daemon start
+ExecStop=/usr/bin/housekeeper daemon stop
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

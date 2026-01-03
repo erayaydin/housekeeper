@@ -1,0 +1,25 @@
+name: housekeeper
+arch: amd64
+platform: linux
+version: 0.1.0
+section: utils
+priority: optional
+maintainer: Housekeeper <erayaydinn@protonmail.com>
+description: Monitor directories for new files and directories
+vendor: Housekeeper
+homepage: https://github.com/erayaydin/housekeeper
+license: MIT
+
+contents:
+  - src: ../../dist/housekeeper-linux-amd64
+    dst: /usr/bin/housekeeper
+    file_info:
+      mode: 0755
+
+  - src: ./housekeeper.service
+    dst: /usr/lib/systemd/system/housekeeper.service
+    type: config
+
+scripts:
+  postinstall: ./postinstall.sh
+  preremove: ./preremove.sh
