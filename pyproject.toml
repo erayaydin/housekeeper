@@ -6,6 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
 
+[project.scripts]
+housekeeper = "housekeeper.main:main"
+
 [dependency-groups]
 dev = [
     "commitizen>=4.11.0",
@@ -60,7 +63,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 convention = "google"
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["housekeeper"]
 section-order = [
     "future",
     "standard-library",
@@ -73,4 +76,7 @@ section-order = [
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
+
+[tool.uv]
+package = true
 
