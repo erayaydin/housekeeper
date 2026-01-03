@@ -1,10 +1,10 @@
 """Configuration file loading and saving."""
 
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import tomli_w
-import tomllib
 from platformdirs import user_config_dir
 
 from housekeeper import APP_NAME
