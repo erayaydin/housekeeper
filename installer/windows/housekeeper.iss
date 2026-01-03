@@ -18,8 +18,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=LICENSE
-OutputDir=dist
+LicenseFile=..\..\LICENSE
+OutputDir=..\..\dist
 OutputBaseFilename=housekeeper-windows-amd64-setup
 Compression=lzma
 SolidCompression=yes
@@ -36,7 +36,7 @@ Name: "addtopath"; Description: "Add to PATH"; GroupDescription: "System integra
 Name: "installservice"; Description: "Install as Windows service (starts automatically)"; GroupDescription: "System integration:"
 
 [Files]
-Source: "dist\housekeeper-windows-amd64.exe"; DestDir: "{app}"; DestName: "{#MyAppExeName}"; Flags: ignoreversion
+Source: "..\..\dist\housekeeper-windows-amd64.exe"; DestDir: "{app}"; DestName: "{#MyAppExeName}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
