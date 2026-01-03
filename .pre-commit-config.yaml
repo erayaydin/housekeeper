@@ -13,8 +13,9 @@ repos:
   rev: v1.19.1
   hooks:
     - id: mypy
-      args: [--config-file=pyproject.toml ]
+      args: [--config-file=pyproject.toml]
       files: ^src/
+      additional_dependencies: [watchdog]
 - repo: https://github.com/commitizen-tools/commitizen
   rev: v4.11.0
   hooks:

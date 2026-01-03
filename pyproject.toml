@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Protects your important directories"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "watchdog>=6.0.0",
+]
 
 [project.scripts]
 housekeeper = "housekeeper.main:main"
