@@ -6,6 +6,7 @@ import threading
 from pathlib import Path
 
 from housekeeper import __version__
+from housekeeper.config.loader import load_config
 from housekeeper.core.watcher import DirectoryWatcher, ItemType
 from housekeeper.logging.logger import (
     get_default_log_directory,
@@ -28,9 +29,15 @@ def create_parser() -> argparse.ArgumentParser:
         version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
+        "--config",
+        type=Path,
+        metavar="FILE",
+        help="path to config file",
+    )
+    parser.add_argument(
         "--only",
         action="store_true",
-        help="watch only specified directories, ignore defaults",
+        help="watch only specified directories, ignore defaults and config",
     )
     parser.add_argument(
         "directories",
@@ -67,6 +74,12 @@ def main() -> int:
     log_file = get_default_log_directory() / "housekeeper.log"
     logger = setup_logging(log_file=log_file)
 
+    try:
+        config = load_config(args.config)
+    except FileNotFoundError as e:
+        logger.error("%s", e)
+        return 1
+
     if args.only:
         if args.directories:
             directories = [d.resolve() for d in args.directories]
@@ -74,6 +87,7 @@ def main() -> int:
             directories = [Path.cwd()]
     else:
         directories = get_default_directories()
+        directories.extend(Path(d).resolve() for d in config.directories)
         directories.extend(d.resolve() for d in args.directories)
 
     watcher = DirectoryWatcher()
