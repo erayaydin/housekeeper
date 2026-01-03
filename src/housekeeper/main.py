@@ -7,6 +7,11 @@ from pathlib import Path
 
 from housekeeper import __version__
 from housekeeper.core.watcher import DirectoryWatcher, ItemType
+from housekeeper.logging.logger import (
+    get_default_log_directory,
+    get_logger,
+    setup_logging,
+)
 from housekeeper.notifications.notifier import notify_new_item
 from housekeeper.paths.xdg import get_default_directories
 
@@ -44,8 +49,9 @@ def handle_created(path: Path, item_type: ItemType) -> None:
         path: Path to the created item.
         item_type: Type of the created item.
     """
+    logger = get_logger()
     type_label = "directory" if item_type == ItemType.DIR else "file"
-    print(f"New {type_label}: {path}")
+    logger.info("New %s: %s", type_label, path)
     notify_new_item(path, item_type)
 
 
@@ -57,6 +63,9 @@ def main() -> int:
     """
     parser = create_parser()
     args = parser.parse_args()
+
+    log_file = get_default_log_directory() / "housekeeper.log"
+    logger = setup_logging(log_file=log_file)
 
     if args.only:
         if args.directories:
@@ -71,10 +80,10 @@ def main() -> int:
 
     for directory in directories:
         if not directory.is_dir():
-            print(f"Error: {directory} is not a directory", file=sys.stderr)
+            logger.error("Not a directory: %s", directory)
             return 1
         watcher.watch(directory, handle_created)
-        print(f"Watching: {directory}")
+        logger.info("Watching: %s", directory)
 
     print("Press Ctrl+C to stop...")
     watcher.start()
@@ -83,8 +92,9 @@ def main() -> int:
     try:
         stop_event.wait()
     except KeyboardInterrupt:
-        print("\nStopping...")
+        print()
 
+    print("Stopping...")
     watcher.stop()
     return 0
 
