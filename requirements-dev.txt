@@ -137,6 +137,8 @@ typing-extensions==4.15.0
     # via mypy
 urllib3==2.6.2
     # via requests
+vermin==1.8.0
+    # via housekeeper (pyproject.toml:dev)
 virtualenv==20.35.4
     # via pre-commit
 watchdog==6.0.0
