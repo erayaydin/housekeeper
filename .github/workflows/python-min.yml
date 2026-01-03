@@ -21,4 +21,4 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-dev.txt
       - name: Check minimal Python version
-        run: vermin --eval-annotations --backport typing --no-parse-comments .2
+        run: vermin --eval-annotations --backport typing --no-parse-comments .
