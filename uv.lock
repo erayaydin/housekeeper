@@ -195,6 +195,8 @@ source = { editable = "." }
 dependencies = [
     { name = "platformdirs" },
     { name = "plyer" },
+    { name = "python-daemon", marker = "sys_platform != 'win32'" },
+    { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "tomli-w" },
     { name = "watchdog" },
 ]
@@ -209,6 +211,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
+    { name = "types-pywin32" },
     { name = "vermin" },
 ]
 
@@ -216,6 +219,8 @@ dev = [
 requires-dist = [
     { name = "platformdirs", specifier = ">=4.5.1" },
     { name = "plyer", specifier = ">=2.1.0" },
+    { name = "python-daemon", marker = "sys_platform != 'win32'", specifier = ">=3.1.2" },
+    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=311" },
     { name = "tomli-w", specifier = ">=1.2.0" },
     { name = "watchdog", specifier = ">=6.0.0" },
 ]
@@ -230,6 +235,7 @@ dev = [
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
     { name = "ruff", specifier = ">=0.14.10" },
+    { name = "types-pywin32", specifier = ">=311.0.0.20251008" },
     { name = "vermin", specifier = ">=1.8.0" },
 ]
 
@@ -311,6 +317,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/33/13a4cb798a171b173f3c94db23adaf13a417130e1493933dc0df0d7fb439/librt-0.7.5-cp314-cp314t-win32.whl", hash = "sha256:118716de5ad6726332db1801bc90fa6d94194cd2e07c1a7822cebf12c496714d", size = 40282, upload-time = "2025-12-25T03:53:01.091Z" },
     { url = "https://files.pythonhosted.org/packages/5f/f1/62b136301796399d65dad73b580f4509bcbd347dff885a450bff08e80cb6/librt-0.7.5-cp314-cp314t-win_amd64.whl", hash = "sha256:3dd58f7ce20360c6ce0c04f7bd9081c7f9c19fc6129a3c705d0c5a35439f201d", size = 46764, upload-time = "2025-12-25T03:53:02.381Z" },
     { url = "https://files.pythonhosted.org/packages/49/cb/940431d9410fda74f941f5cd7f0e5a22c63be7b0c10fa98b2b7022b48cb1/librt-0.7.5-cp314-cp314t-win_arm64.whl", hash = "sha256:08153ea537609d11f774d2bfe84af39d50d5c9ca3a4d061d946e0c9d8bce04a1", size = 39728, upload-time = "2025-12-25T03:53:03.306Z" },
+]
+
+[[package]]
+name = "lockfile"
+version = "0.12.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/47/72cb04a58a35ec495f96984dddb48232b551aafb95bde614605b754fe6f7/lockfile-0.12.2.tar.gz", hash = "sha256:6aed02de03cba24efabcd600b30540140634fc06cfa603822d508d5361e9f799", size = 20874, upload-time = "2015-11-25T18:29:58.279Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/22/9460e311f340cb62d26a38c419b1381b8593b0bb6b5d1f056938b086d362/lockfile-0.12.2-py2.py3-none-any.whl", hash = "sha256:6c3cb24f344923d30b2785d5ad75182c8ea7ac1b6171b08657258ec7429d50fa", size = 13564, upload-time = "2015-11-25T18:29:51.462Z" },
 ]
 
 [[package]]
@@ -630,6 +645,18 @@ wheels = [
 ]
 
 [[package]]
+name = "python-daemon"
+version = "3.1.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "lockfile" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3d/37/4f10e37bdabc058a32989da2daf29e57dc59dbc5395497f3d36d5f5e2694/python_daemon-3.1.2.tar.gz", hash = "sha256:f7b04335adc473de877f5117e26d5f1142f4c9f7cd765408f0877757be5afbf4", size = 71576, upload-time = "2024-12-03T08:41:07.843Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/45/3c/b88167e2d6785c0e781ee5d498b07472aeb9b6765da3b19e7cc9e0813841/python_daemon-3.1.2-py3-none-any.whl", hash = "sha256:b906833cef63502994ad48e2eab213259ed9bb18d54fa8774dcba2ff7864cec6", size = 30872, upload-time = "2024-12-03T08:41:03.322Z" },
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -639,6 +666,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3", size = 342432, upload-time = "2024-03-01T18:36:20.211Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427", size = 229892, upload-time = "2024-03-01T18:36:18.57Z" },
+]
+
+[[package]]
+name = "pywin32"
+version = "311"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a5/be/3fd5de0979fcb3994bfee0d65ed8ca9506a8a1260651b86174f6a86f52b3/pywin32-311-cp313-cp313-win32.whl", hash = "sha256:f95ba5a847cba10dd8c4d8fefa9f2a6cf283b8b88ed6178fa8a6c1ab16054d0d", size = 8705700, upload-time = "2025-07-14T20:13:26.471Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/28/e0a1909523c6890208295a29e05c2adb2126364e289826c0a8bc7297bd5c/pywin32-311-cp313-cp313-win_amd64.whl", hash = "sha256:718a38f7e5b058e76aee1c56ddd06908116d35147e133427e59a3983f703a20d", size = 9494700, upload-time = "2025-07-14T20:13:28.243Z" },
+    { url = "https://files.pythonhosted.org/packages/04/bf/90339ac0f55726dce7d794e6d79a18a91265bdf3aa70b6b9ca52f35e022a/pywin32-311-cp313-cp313-win_arm64.whl", hash = "sha256:7b4075d959648406202d92a2310cb990fea19b535c7f4a78d3f5e10b926eeb8a", size = 8709318, upload-time = "2025-07-14T20:13:30.348Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/31/097f2e132c4f16d99a22bfb777e0fd88bd8e1c634304e102f313af69ace5/pywin32-311-cp314-cp314-win32.whl", hash = "sha256:b7a2c10b93f8986666d0c803ee19b5990885872a7de910fc460f9b0c2fbf92ee", size = 8840714, upload-time = "2025-07-14T20:13:32.449Z" },
+    { url = "https://files.pythonhosted.org/packages/90/4b/07c77d8ba0e01349358082713400435347df8426208171ce297da32c313d/pywin32-311-cp314-cp314-win_amd64.whl", hash = "sha256:3aca44c046bd2ed8c90de9cb8427f581c479e594e99b5c0bb19b29c10fd6cb87", size = 9656800, upload-time = "2025-07-14T20:13:34.312Z" },
+    { url = "https://files.pythonhosted.org/packages/c0/d2/21af5c535501a7233e734b8af901574572da66fcc254cb35d0609c9080dd/pywin32-311-cp314-cp314-win_arm64.whl", hash = "sha256:a508e2d9025764a8270f93111a970e1d0fbfc33f4153b388bb649b7eec4f9b42", size = 8932540, upload-time = "2025-07-14T20:13:36.379Z" },
 ]
 
 [[package]]
@@ -776,6 +816,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/cc/18/0bbf3884e9eaa38819ebe46a7bd25dcd56b67434402b66a58c4b8e552575/tomlkit-0.13.3.tar.gz", hash = "sha256:430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1", size = 185207, upload-time = "2025-06-05T07:13:44.947Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/75/8539d011f6be8e29f339c42e633aae3cb73bffa95dd0f9adec09b9c58e85/tomlkit-0.13.3-py3-none-any.whl", hash = "sha256:c89c649d79ee40629a9fda55f8ace8c6a1b42deb912b2a8fd8d942ddadb606b0", size = 38901, upload-time = "2025-06-05T07:13:43.546Z" },
+]
+
+[[package]]
+name = "types-pywin32"
+version = "311.0.0.20251008"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1a/05/cd94300066241a7abb52238f0dd8d7f4fe1877cf2c72bd1860856604d962/types_pywin32-311.0.0.20251008.tar.gz", hash = "sha256:d6d4faf8e0d7fdc0e0a1ff297b80be07d6d18510f102d793bf54e9e3e86f6d06", size = 329561, upload-time = "2025-10-08T02:51:39.436Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/08/00a38e6b71585e6741d5b3b4cc9dd165cf549b6f1ed78815c6585f8b1b58/types_pywin32-311.0.0.20251008-py3-none-any.whl", hash = "sha256:775e1046e0bad6d29ca47501301cce67002f6661b9cebbeca93f9c388c53fab4", size = 392942, upload-time = "2025-10-08T02:51:38.327Z" },
 ]
 
 [[package]]
