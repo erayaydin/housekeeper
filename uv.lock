@@ -193,6 +193,7 @@ name = "housekeeper"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "platformdirs" },
     { name = "watchdog" },
 ]
 
@@ -210,7 +211,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "watchdog", specifier = ">=6.0.0" }]
+requires-dist = [
+    { name = "platformdirs", specifier = ">=4.5.1" },
+    { name = "watchdog", specifier = ">=6.0.0" },
+]
 
 [package.metadata.requires-dev]
 dev = [

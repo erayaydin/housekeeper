@@ -6,6 +6,7 @@ import threading
 from pathlib import Path
 
 from housekeeper.core.watcher import DirectoryWatcher, ItemType
+from housekeeper.paths.xdg import get_default_directories
 
 __version__ = "0.1.0"
 
@@ -22,10 +23,15 @@ def create_parser() -> argparse.ArgumentParser:
         version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
+        "--only",
+        action="store_true",
+        help="watch only specified directories, ignore defaults",
+    )
+    parser.add_argument(
         "directories",
-        nargs="+",
+        nargs="*",
         type=Path,
-        help="directories to watch",
+        help="additional directories to watch",
     )
 
     return parser
@@ -51,14 +57,23 @@ def main() -> int:
     parser = create_parser()
     args = parser.parse_args()
 
+    if args.only:
+        if args.directories:
+            directories = [d.resolve() for d in args.directories]
+        else:
+            directories = [Path.cwd()]
+    else:
+        directories = get_default_directories()
+        directories.extend(d.resolve() for d in args.directories)
+
     watcher = DirectoryWatcher()
 
-    for directory in args.directories:
+    for directory in directories:
         if not directory.is_dir():
             print(f"Error: {directory} is not a directory", file=sys.stderr)
             return 1
-        watcher.watch(directory.resolve(), handle_created)
-        print(f"Watching: {directory.resolve()}")
+        watcher.watch(directory, handle_created)
+        print(f"Watching: {directory}")
 
     print("Press Ctrl+C to stop...")
     watcher.start()

@@ -5,6 +5,7 @@ description = "Protects your important directories"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "platformdirs>=4.5.1",
     "watchdog>=6.0.0",
 ]
 
