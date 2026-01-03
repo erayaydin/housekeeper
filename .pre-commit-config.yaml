@@ -20,3 +20,12 @@ repos:
   hooks:
     - id: commitizen
       stages: [commit-msg]
+- repo: local
+  hooks:
+    - id: pytest
+      name: pytest
+      entry: uv run pytest
+      language: system
+      types: [python]
+      pass_filenames: false
+      args: [ -v ]
