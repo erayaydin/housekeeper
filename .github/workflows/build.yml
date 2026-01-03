@@ -16,7 +16,7 @@ jobs:
           - os: ubuntu-latest
             artifact_name: housekeeper
             asset_name: housekeeper-linux-amd64
-          - os: macos-13
+          - os: macos-15-intel
             artifact_name: housekeeper
             asset_name: housekeeper-macos-amd64
           - os: macos-latest
@@ -43,14 +43,17 @@ jobs:
       - name: Build executable
         run: uv run pyinstaller housekeeper.spec
 
+      - name: Rename artifact
+        run: mv dist/${{ matrix.artifact_name }} dist/${{ matrix.asset_name }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
-          path: dist/${{ matrix.artifact_name }}
+          path: dist/${{ matrix.asset_name }}
 
       - name: Upload release asset
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/${{ matrix.artifact_name }}
+          files: dist/${{ matrix.asset_name }}
