@@ -43,9 +43,13 @@ jobs:
 
       - name: Build deb package
         run: nfpm package -p deb -f installer/linux/nfpm.yaml -t dist/
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
 
       - name: Build rpm package
         run: nfpm package -p rpm -f installer/linux/nfpm.yaml -t dist/
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
