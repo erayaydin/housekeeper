@@ -29,6 +29,15 @@ if is_windows:
         "servicemanager",
         "housekeeper.daemon.windows",
     ])
+elif is_macos:
+    hiddenimports.extend([
+        "daemon",
+        "daemon.pidfile",
+        "housekeeper.daemon.unix",
+        "housekeeper.daemon.runner",
+        "pyobjus",
+        "pyobjus.dylib_manager",
+    ])
 else:
     hiddenimports.extend([
         "daemon",
