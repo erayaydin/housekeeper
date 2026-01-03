@@ -1,6 +1,8 @@
 """Main entry point for the application."""
 
 import argparse
+import os
+import signal
 import sys
 import threading
 from pathlib import Path
@@ -12,6 +14,12 @@ from housekeeper.config.loader import (
     save_config,
 )
 from housekeeper.core.watcher import DirectoryWatcher, ItemType
+from housekeeper.daemon.manager import (
+    get_daemon_status,
+    remove_pid_file,
+    stop_daemon,
+    write_pid,
+)
 from housekeeper.logging.logger import (
     get_default_log_directory,
     get_logger,
@@ -67,6 +75,13 @@ def create_parser() -> argparse.ArgumentParser:
         type=Path,
         help="directory path to remove",
     )
+
+    # daemon command
+    daemon_parser = subparsers.add_parser("daemon", help="manage daemon")
+    daemon_subparsers = daemon_parser.add_subparsers(dest="daemon_command")
+    daemon_subparsers.add_parser("start", help="start daemon")
+    daemon_subparsers.add_parser("stop", help="stop daemon")
+    daemon_subparsers.add_parser("status", help="show daemon status")
 
     # Default watch arguments (when no subcommand)
     parser.add_argument(
@@ -176,6 +191,110 @@ def cmd_watch(args: argparse.Namespace, config: Config) -> int:
     return 0
 
 
+def run_daemon(config: Config) -> None:
+    """Run the watcher as a daemon process."""
+    logger = get_logger()
+
+    directories = get_default_directories()
+    directories.extend(Path(d).resolve() for d in config.directories)
+
+    watcher = DirectoryWatcher()
+
+    for directory in directories:
+        if not directory.is_dir():
+            logger.warning("Skipping non-directory: %s", directory)
+            continue
+        watcher.watch(directory, handle_created)
+        logger.info("Watching: %s", directory)
+
+    if not watcher._observer.emitters:
+        logger.error("No directories to watch")
+        return
+
+    watcher.start()
+    logger.info("Daemon started")
+
+    stop_event = threading.Event()
+
+    def handle_sigterm(_signum: int, _frame: object) -> None:
+        stop_event.set()
+
+    signal.signal(signal.SIGTERM, handle_sigterm)
+
+    stop_event.wait()
+
+    logger.info("Daemon stopping")
+    watcher.stop()
+    remove_pid_file()
+
+
+def cmd_daemon_start(config: Config) -> int:
+    """Start the daemon."""
+    running, pid = get_daemon_status()
+    if running:
+        print(f"Daemon already running (PID {pid})")
+        return 1
+
+    read_fd, write_fd = os.pipe()
+
+    pid = os.fork()
+    if pid > 0:
+        os.close(write_fd)
+        daemon_pid = int(os.read(read_fd, 32).decode().strip())
+        os.close(read_fd)
+        print(f"Daemon started (PID {daemon_pid})")
+        return 0
+
+    os.close(read_fd)
+    os.setsid()
+
+    pid = os.fork()
+    if pid > 0:
+        os._exit(0)
+
+    daemon_pid = os.getpid()
+    write_pid(daemon_pid)
+    os.write(write_fd, str(daemon_pid).encode())
+    os.close(write_fd)
+
+    # Redirect standard file descriptors to /dev/null
+    devnull = os.open(os.devnull, os.O_RDWR)
+    os.dup2(devnull, sys.stdin.fileno())
+    os.dup2(devnull, sys.stdout.fileno())
+    os.dup2(devnull, sys.stderr.fileno())
+    os.close(devnull)
+
+    run_daemon(config)
+    return 0
+
+
+def cmd_daemon_stop() -> int:
+    """Stop the daemon."""
+    try:
+        stopped = stop_daemon()
+    except TimeoutError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+    if stopped:
+        print("Daemon stopped")
+        return 0
+    else:
+        print("Daemon not running")
+        return 1
+
+
+def cmd_daemon_status() -> int:
+    """Show daemon status."""
+    running, pid = get_daemon_status()
+    if running:
+        print(f"Daemon running (PID {pid})")
+        return 0
+    else:
+        print("Daemon not running")
+        return 1
+
+
 def main() -> int:
     """Run the housekeeper CLI.
 
@@ -205,6 +324,24 @@ def main() -> int:
             return cmd_dirs_remove(config, args.config, args.path)
         else:
             parser.parse_args(["dirs", "--help"])
+            return 1
+
+    if args.command == "daemon":
+        if args.daemon_command == "start":
+            try:
+                config = load_config(args.config)
+            except FileNotFoundError as e:
+                if args.config is not None:
+                    print(f"Config not found: {e}", file=sys.stderr)
+                    return 1
+                config = Config()
+            return cmd_daemon_start(config)
+        elif args.daemon_command == "stop":
+            return cmd_daemon_stop()
+        elif args.daemon_command == "status":
+            return cmd_daemon_status()
+        else:
+            parser.parse_args(["daemon", "--help"])
             return 1
 
     logger = get_logger()
