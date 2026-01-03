@@ -1,5 +1,10 @@
 """Housekeeper - Monitor directories for new files and directories."""
 
-from housekeeper.main import __version__
+from importlib.metadata import metadata
 
-__all__ = ["__version__"]
+_metadata = metadata("housekeeper")
+
+__version__ = _metadata["Version"]
+APP_NAME = _metadata["Name"].title()
+
+__all__ = ["APP_NAME", "__version__"]

@@ -5,10 +5,10 @@ import sys
 import threading
 from pathlib import Path
 
+from housekeeper import __version__
 from housekeeper.core.watcher import DirectoryWatcher, ItemType
+from housekeeper.notifications.notifier import notify_new_item
 from housekeeper.paths.xdg import get_default_directories
-
-__version__ = "0.1.0"
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -46,6 +46,7 @@ def handle_created(path: Path, item_type: ItemType) -> None:
     """
     type_label = "directory" if item_type == ItemType.DIR else "file"
     print(f"New {type_label}: {path}")
+    notify_new_item(path, item_type)
 
 
 def main() -> int:
