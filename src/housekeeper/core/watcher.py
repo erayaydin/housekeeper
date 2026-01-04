@@ -4,11 +4,7 @@ from collections.abc import Callable
 from enum import Enum, auto
 from pathlib import Path
 
-from watchdog.events import (
-    DirCreatedEvent,
-    FileCreatedEvent,
-    FileSystemEventHandler,
-)
+from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
 
@@ -37,7 +33,7 @@ class CreationEventHandler(FileSystemEventHandler):
         self._watched_dir = watched_dir
         self._on_created = on_created
 
-    def on_created(self, event: FileCreatedEvent | DirCreatedEvent) -> None:
+    def on_created(self, event: FileSystemEvent) -> None:
         """Handle creation events.
 
         Args:
@@ -51,8 +47,7 @@ class CreationEventHandler(FileSystemEventHandler):
         if path.parent != self._watched_dir:
             return
 
-        is_dir = isinstance(event, DirCreatedEvent)
-        item_type = ItemType.DIR if is_dir else ItemType.FILE
+        item_type = ItemType.DIR if event.is_directory else ItemType.FILE
         self._on_created(path, item_type)
 
 
