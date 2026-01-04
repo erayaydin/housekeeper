@@ -48,6 +48,11 @@ def run_as_daemon(
         run_func(stop_event)
 
 
+def is_frozen() -> bool:
+    """Check if running as a frozen PyInstaller executable."""
+    return getattr(sys, "frozen", False)
+
+
 def start_daemon_subprocess(pid_path: Path | None = None) -> int | None:
     """Start the daemon as a subprocess and return its PID.
 
@@ -63,10 +68,14 @@ def start_daemon_subprocess(pid_path: Path | None = None) -> int | None:
         pid_path = get_pid_file_path()
 
     # Start daemon subprocess
-    subprocess.Popen(
-        [sys.executable, "-m", "housekeeper.daemon.runner"],
-        start_new_session=True,
-    )
+    if is_frozen():
+        # Running as PyInstaller bundle - use internal flag
+        cmd = [sys.executable, "--_run-daemon"]
+    else:
+        # Running as Python script - use module
+        cmd = [sys.executable, "-m", "housekeeper.daemon.runner"]
+
+    subprocess.Popen(cmd, start_new_session=True)
 
     # Wait for PID file to be created
     for _ in range(50):  # 5 seconds max

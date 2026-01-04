@@ -318,12 +318,24 @@ def cmd_daemon_uninstall() -> int:
         return 1
 
 
+def _run_daemon_mode() -> int:
+    """Run in daemon mode (internal use for frozen executables)."""
+    from housekeeper.daemon import runner
+
+    result: int = runner.main()
+    return result
+
+
 def main() -> int:
     """Run the housekeeper CLI.
 
     Returns:
         Exit code.
     """
+    # Handle internal daemon flag for frozen executables
+    if "--_run-daemon" in sys.argv:
+        return _run_daemon_mode()
+
     parser = create_parser()
     args = parser.parse_args()
 
