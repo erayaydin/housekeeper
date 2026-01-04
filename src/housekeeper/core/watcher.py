@@ -71,7 +71,9 @@ class DirectoryWatcher:
             on_created: Callback for creation events.
         """
         handler = CreationEventHandler(directory, on_created)
-        self._observer.schedule(handler, str(directory), recursive=False)
+        # recursive=True needed for macOS FSEvents to detect directory creation
+        # parent check in handler ensures only top-level items are reported
+        self._observer.schedule(handler, str(directory), recursive=True)
 
     def start(self) -> None:
         """Start watching."""
