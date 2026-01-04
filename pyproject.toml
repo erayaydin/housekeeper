@@ -1,15 +1,17 @@
 [project]
 name = "housekeeper"
-version = "0.1.10"
+version = "0.1.11"
 description = "Protects your important directories"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "platformdirs>=4.5.1",
     "plyer>=2.1.0",
-    "pyobjus>=1.2.3 ; sys_platform == 'darwin'",
-    "python-daemon>=3.1.2 ; sys_platform != 'win32'",
+    "pyobjc-framework-Cocoa>=10.0 ; sys_platform == 'darwin'",
+    "pyobjc-framework-UserNotifications>=10.0 ; sys_platform == 'darwin'",
+    "python-daemon>=3.1.2 ; sys_platform == 'linux'",
     "pywin32>=311 ; sys_platform == 'win32'",
+    "rumps>=0.4.0 ; sys_platform == 'darwin'",
     "tomli-w>=1.2.0",
     "watchdog>=6.0.0",
 ]

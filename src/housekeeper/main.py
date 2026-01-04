@@ -21,6 +21,20 @@ from housekeeper.notifications.notifier import notify_new_item
 from housekeeper.paths.xdg import get_default_directories
 
 IS_WINDOWS = sys.platform == "win32"
+IS_MACOS = sys.platform == "darwin"
+
+
+def _is_app_bundle() -> bool:
+    """Check if running inside a macOS .app bundle.
+
+    Returns:
+        True if running inside a .app bundle.
+    """
+    if not IS_MACOS:
+        return False
+    if not getattr(sys, "frozen", False):
+        return False
+    return ".app/Contents/MacOS" in sys.executable
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -40,6 +54,13 @@ def create_parser() -> argparse.ArgumentParser:
         metavar="FILE",
         help="path to config file",
     )
+
+    if IS_MACOS:
+        parser.add_argument(
+            "--gui",
+            action="store_true",
+            help="run as menu bar application (macOS only)",
+        )
 
     subparsers = parser.add_subparsers(dest="command")
 
@@ -326,6 +347,13 @@ def _run_daemon_mode() -> int:
     return result
 
 
+def _run_gui_mode() -> int:
+    """Run in GUI mode (macOS menu bar app)."""
+    from housekeeper.macos.app import run_app
+
+    return run_app()  # type: ignore[no-any-return]
+
+
 def main() -> int:
     """Run the housekeeper CLI.
 
@@ -335,6 +363,10 @@ def main() -> int:
     # Handle internal daemon flag for frozen executables
     if "--_run-daemon" in sys.argv:
         return _run_daemon_mode()
+
+    # On macOS, check for GUI mode (--gui flag or .app bundle)
+    if IS_MACOS and ("--gui" in sys.argv or _is_app_bundle()):
+        return _run_gui_mode()
 
     parser = create_parser()
     args = parser.parse_args()

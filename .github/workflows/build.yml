@@ -96,37 +96,32 @@ jobs:
       - name: Install dependencies
         run: uv sync --dev
 
-      - name: Build executable
+      - name: Build app bundle
         run: uv run pyinstaller housekeeper.spec
-
-      - name: Rename executable
-        run: mv dist/housekeeper dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64
 
       - name: Create DMG
         run: |
-          mkdir -p dist/dmg
-          cp dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64 dist/dmg/housekeeper
-          hdiutil create -volname "Housekeeper" -srcfolder dist/dmg -ov -format UDZO dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64.dmg
+          chmod +x installer/macos/create_dmg.sh
+          ./installer/macos/create_dmg.sh ${{ steps.version.outputs.version }} amd64
 
-      - name: Upload executable
+      - name: Upload app bundle
         uses: actions/upload-artifact@v4
         with:
-          name: housekeeper-${{ steps.version.outputs.version }}-macos-amd64
-          path: dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64
+          name: Housekeeper-${{ steps.version.outputs.version }}-macos-amd64-app
+          path: dist/Housekeeper.app
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
-          name: housekeeper-${{ steps.version.outputs.version }}-macos-amd64-dmg
-          path: dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64.dmg
+          name: Housekeeper-${{ steps.version.outputs.version }}-macos-amd64-dmg
+          path: dist/Housekeeper-${{ steps.version.outputs.version }}-macos-amd64.dmg
 
       - name: Upload release assets
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64
-            dist/housekeeper-${{ steps.version.outputs.version }}-macos-amd64.dmg
+            dist/Housekeeper-${{ steps.version.outputs.version }}-macos-amd64.dmg
 
   build-macos-arm:
     runs-on: macos-latest
@@ -146,37 +141,32 @@ jobs:
       - name: Install dependencies
         run: uv sync --dev
 
-      - name: Build executable
+      - name: Build app bundle
         run: uv run pyinstaller housekeeper.spec
-
-      - name: Rename executable
-        run: mv dist/housekeeper dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64
 
       - name: Create DMG
         run: |
-          mkdir -p dist/dmg
-          cp dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64 dist/dmg/housekeeper
-          hdiutil create -volname "Housekeeper" -srcfolder dist/dmg -ov -format UDZO dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64.dmg
+          chmod +x installer/macos/create_dmg.sh
+          ./installer/macos/create_dmg.sh ${{ steps.version.outputs.version }} arm64
 
-      - name: Upload executable
+      - name: Upload app bundle
         uses: actions/upload-artifact@v4
         with:
-          name: housekeeper-${{ steps.version.outputs.version }}-macos-arm64
-          path: dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64
+          name: Housekeeper-${{ steps.version.outputs.version }}-macos-arm64-app
+          path: dist/Housekeeper.app
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
-          name: housekeeper-${{ steps.version.outputs.version }}-macos-arm64-dmg
-          path: dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64.dmg
+          name: Housekeeper-${{ steps.version.outputs.version }}-macos-arm64-dmg
+          path: dist/Housekeeper-${{ steps.version.outputs.version }}-macos-arm64.dmg
 
       - name: Upload release assets
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64
-            dist/housekeeper-${{ steps.version.outputs.version }}-macos-arm64.dmg
+            dist/Housekeeper-${{ steps.version.outputs.version }}-macos-arm64.dmg
 
   build-windows:
     runs-on: windows-latest

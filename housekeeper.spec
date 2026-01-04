@@ -9,6 +9,17 @@ block_cipher = None
 # Determine platform-specific settings
 is_windows = sys.platform == "win32"
 is_macos = sys.platform == "darwin"
+is_linux = sys.platform == "linux"
+
+# Get version from pyproject.toml
+version = "unknown"
+try:
+    import tomllib
+    with open("pyproject.toml", "rb") as f:
+        pyproject = tomllib.load(f)
+        version = pyproject.get("project", {}).get("version", version)
+except Exception:
+    pass
 
 # Hidden imports needed for the application
 hiddenimports = [
@@ -31,14 +42,17 @@ if is_windows:
     ])
 elif is_macos:
     hiddenimports.extend([
-        "daemon",
-        "daemon.pidfile",
-        "housekeeper.daemon.unix",
-        "housekeeper.daemon.runner",
-        "pyobjus",
-        "pyobjus.dylib_manager",
+        "housekeeper.macos",
+        "housekeeper.macos.app",
+        "housekeeper.macos.launchd",
+        "housekeeper.macos.notifications",
+        "rumps",
+        "objc",
+        "Foundation",
+        "AppKit",
+        "UserNotifications",
     ])
-else:
+elif is_linux:
     hiddenimports.extend([
         "daemon",
         "daemon.pidfile",
@@ -85,3 +99,24 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
+
+# Create macOS .app bundle for menu bar mode
+if is_macos:
+    app = BUNDLE(
+        exe,
+        name="Housekeeper.app",
+        icon=None,
+        bundle_identifier="com.housekeeper.app",
+        info_plist={
+            "CFBundleName": "Housekeeper",
+            "CFBundleDisplayName": "Housekeeper",
+            "CFBundleVersion": version,
+            "CFBundleShortVersionString": version,
+            "CFBundleExecutable": "housekeeper",
+            "CFBundlePackageType": "APPL",
+            "LSUIElement": True,
+            "LSMinimumSystemVersion": "10.14.0",
+            "NSHighResolutionCapable": True,
+            "NSRequiresAquaSystemAppearance": False,
+        },
+    )

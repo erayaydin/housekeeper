@@ -8,7 +8,17 @@ from housekeeper import APP_NAME
 from housekeeper.core.watcher import ItemType
 
 
-def _notify_macos(title: str, message: str) -> bool:
+def _notify_macos_native(title: str, message: str) -> bool:
+    """Send notification using native macOS UserNotifications framework."""
+    try:
+        from housekeeper.macos.notifications import notify
+
+        return notify(title, message)  # type: ignore[no-any-return]
+    except ImportError:
+        return False
+
+
+def _notify_macos_osascript(title: str, message: str) -> bool:
     """Send notification on macOS using osascript."""
     script = f'display notification "{message}" with title "{title}"'
     try:
@@ -20,6 +30,16 @@ def _notify_macos(title: str, message: str) -> bool:
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
         return False
+
+
+def _notify_macos(title: str, message: str) -> bool:
+    """Send notification on macOS.
+
+    Tries native UserNotifications first, falls back to osascript.
+    """
+    if _notify_macos_native(title, message):
+        return True
+    return _notify_macos_osascript(title, message)
 
 
 def _notify_plyer(title: str, message: str) -> bool:
